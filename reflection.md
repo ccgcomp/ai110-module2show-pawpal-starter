@@ -49,6 +49,12 @@ a new Task with `due_date` moved forward using `timedelta`, and `get_todays_sche
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
+My scheduler only flags a conflict when two unfinished tasks have exactly the same date and "HH:MM" time. It does
+not check overlapping durations, so a 30-minute walk at 07:30 and a feeding at 07:45 are not flagged. That is
+reasonable here because Task has no duration (I kept it out of the design on purpose), exact matches are simple to
+explain and test, and a warning that never crashes the app is more useful to a busy owner than a complicated rule
+that might be wrong.
+
 ---
 
 ## 3. AI Collaboration
@@ -62,6 +68,12 @@ a new Task with `due_date` moved forward using `timedelta`, and `get_todays_sche
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
+
+When I asked the AI to simplify `find_conflicts()`, it offered a version using `itertools.groupby` instead of
+building a dictionary with `setdefault`. I ran both on the same mixed set of tasks and they returned identical
+warnings, so the question was readability. The `groupby` version was not shorter: it needs the list sorted first,
+the key lambda written out twice, and `list(group)` before it can check the length. The dictionary version reads
+top to bottom without those extra requirements, so I kept my original and rejected the suggestion.
 
 ---
 
