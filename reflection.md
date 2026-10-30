@@ -13,6 +13,13 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+My design has four classes. **Task** is a dataclass holding a description, a time ("HH:MM"), a frequency (once,
+daily or weekly) and a completed flag, and it can mark itself complete. **Pet** is a dataclass with a name,
+species and a list of its tasks, and it can add and list them. **Owner** holds the owner's name and list of pets
+and can gather every task across all of them. **Scheduler** takes an Owner and builds the daily schedule from the
+tasks of all their pets, so the organizing logic lives in one place and the other three classes mostly just hold
+data.
+
 **b. Design changes**
 
 - Did your design change during implementation?
