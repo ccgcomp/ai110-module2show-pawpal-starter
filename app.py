@@ -89,9 +89,9 @@ if schedule:
             pet, task = pending[labels.index(choice)]
             next_task = scheduler.complete_task(pet, task)
             if next_task:
-                st.success(f"Done! Next {task.frequency} task scheduled for {next_task.due_date}.")
+                st.toast(f"Done! Next {task.frequency} task scheduled for {next_task.due_date}.")
             else:
-                st.success("Done!")
+                st.toast("Done!")
             st.rerun()
     else:
         st.info("All of today's tasks are complete.")

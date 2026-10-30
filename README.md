@@ -158,7 +158,7 @@ All of these live on the `Scheduler` class in `pawpal_system.py` and work across
 3. Under **Add a Task**, choose a pet, type a description (for example "Morning walk"), pick a time and a frequency, and click **Add task**. Add a few tasks at different times.
 4. **Today's Schedule** shows every task due today from all pets in one table, sorted by time.
 5. Add two tasks at the same time (for the same pet or different pets). A yellow warning names the clashing tasks and the time, and the app keeps working.
-6. Under **Complete a Task**, pick a daily task and click **Mark complete**. It is checked off, and a message shows that the next one is scheduled for tomorrow.
+6. Under **Complete a Task**, pick a daily task and click **Mark complete**. It is checked off, and a pop-up message says the next one is scheduled for tomorrow.
 7. Under **Filter Tasks**, choose a pet and a status (All, Not done or Done) to see only the matching tasks, still sorted by time.
 
 ### Scheduler behaviors shown
