@@ -42,6 +42,15 @@ pip install -r requirements.txt
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
 
+## ✨ Features
+
+- **Owner, pets and tasks:** one owner can have many pets, and each pet has its own list of tasks with a time, a frequency (once, daily or weekly) and a due date.
+- **Sorting by time:** the schedule is ordered by `HH:MM` across all pets, so you see one combined day instead of one list per pet.
+- **Filtering:** view tasks by pet, by done / not done, or both.
+- **Recurring tasks:** completing a daily or weekly task automatically creates the next one for tomorrow or next week.
+- **Conflict warnings:** if two unfinished tasks share the same time, for one pet or for different pets, the app shows a warning and keeps working.
+- **Streamlit UI:** add pets and tasks, see today's schedule with warnings, mark tasks complete, and filter. Data stays between button clicks through `st.session_state`.
+
 ## 🖥️ Sample Output
 
 Run the demo with `python main.py`. It builds one owner with two pets and shows sorting, conflict warnings, recurring tasks and filtering (dates reflect the day it was run):
@@ -142,12 +151,63 @@ All of these live on the `Scheduler` class in `pawpal_system.py` and work across
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+### In the app (`python -m streamlit run app.py`)
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Type an owner name, then enter a pet name and pick a species (dog, cat or other) and click **Add pet**. The pet appears in the "Your pets" table and stays there when you click other buttons.
+2. Add a second pet the same way, so the schedule has to work across more than one pet.
+3. Under **Add a Task**, choose a pet, type a description (for example "Morning walk"), pick a time and a frequency, and click **Add task**. Add a few tasks at different times.
+4. **Today's Schedule** shows every task due today from all pets in one table, sorted by time.
+5. Add two tasks at the same time (for the same pet or different pets). A yellow warning names the clashing tasks and the time, and the app keeps working.
+6. Under **Complete a Task**, pick a daily task and click **Mark complete**. It is checked off, and a message shows that the next one is scheduled for tomorrow.
+7. Under **Filter Tasks**, choose a pet and a status (All, Not done or Done) to see only the matching tasks, still sorted by time.
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+### Scheduler behaviors shown
+
+- **Sorting:** `Scheduler.sort_by_time()` and `get_todays_schedule()`
+- **Filtering:** `Scheduler.filter_tasks()`
+- **Conflict detection:** `Scheduler.find_conflicts()`
+- **Recurring tasks:** `Scheduler.complete_task()`
+
+### From the command line (`python main.py`)
+
+The demo script builds one owner with two pets and eight tasks added out of order, including two same-time pairs, then prints the sorted schedule, the conflict warnings, a recurring-task completion, and three filters:
+
+```
+Today's Schedule for Cody (sorted by time)
+----------------------------------------
+[ ] 2026-10-30 07:30  Buddy (dog): Morning walk [daily]
+[ ] 2026-10-30 07:30  Whiskers (cat): Play time [once]
+[ ] 2026-10-30 08:00  Whiskers (cat): Breakfast [daily]
+[ ] 2026-10-30 12:00  Buddy (dog): Flea medication [weekly]
+[ ] 2026-10-30 15:00  Whiskers (cat): Vet appointment [once]
+[ ] 2026-10-30 18:00  Buddy (dog): Evening feeding [daily]
+[ ] 2026-10-30 18:00  Buddy (dog): Brush teeth [daily]
+[ ] 2026-10-30 19:30  Whiskers (cat): Clean litter box [daily]
+
+Conflict warnings
+----------------------------------------
+WARNING: Conflict on 2026-10-30 at 07:30: Buddy - Morning walk, Whiskers - Play time
+WARNING: Conflict on 2026-10-30 at 18:00: Buddy - Evening feeding, Buddy - Brush teeth
+
+Completed 'Morning walk'. Next one created for 2026-10-31.
+
+Filter: Whiskers' tasks
+----------------------------------------
+[ ] 2026-10-30 07:30  Whiskers (cat): Play time [once]
+[ ] 2026-10-30 08:00  Whiskers (cat): Breakfast [daily]
+[ ] 2026-10-30 15:00  Whiskers (cat): Vet appointment [once]
+[ ] 2026-10-30 19:30  Whiskers (cat): Clean litter box [daily]
+
+Filter: completed tasks
+----------------------------------------
+[x] 2026-10-30 07:30  Buddy (dog): Morning walk [daily]
+
+Filter: Buddy's unfinished tasks
+----------------------------------------
+[ ] 2026-10-30 12:00  Buddy (dog): Flea medication [weekly]
+[ ] 2026-10-30 18:00  Buddy (dog): Evening feeding [daily]
+[ ] 2026-10-30 18:00  Buddy (dog): Brush teeth [daily]
+[ ] 2026-10-31 07:30  Buddy (dog): Morning walk [daily]
+```
+
+**Screenshot or video** *(optional)*: not included.
