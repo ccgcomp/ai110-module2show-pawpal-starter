@@ -2,6 +2,12 @@
 
 ## 1. System Design
 
+**Three core actions a user should be able to do**
+
+1. Add a pet (the owner enters their name, the pet's name, and the species)
+2. Add a task for a pet
+3. See the schedule
+
 **a. Initial design**
 
 - Briefly describe your initial UML design.
