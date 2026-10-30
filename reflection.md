@@ -18,6 +18,12 @@
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
+Yes. In my first design, `Owner.get_all_tasks()` and `Scheduler.get_todays_schedule()` returned plain lists of
+Tasks. During the skeleton review I noticed a schedule line like "08:00 Walk" can't say which pet it is for once
+the owner has 2 or more pets. I considered adding a `pet_name` to Task, but that would give Task a back-link to
+Pet that I'd have to keep in sync. Instead both methods now return `(pet, task)` pairs, so Task stays unchanged
+and the Scheduler, which works across pets, is the one that knows where each task came from.
+
 ---
 
 ## 2. Scheduling Logic and Tradeoffs

@@ -33,7 +33,7 @@ class Owner:
     def add_pet(self, pet: Pet) -> None:
         pass
 
-    def get_all_tasks(self) -> list[Task]:
+    def get_all_tasks(self) -> list[tuple[Pet, Task]]:
         pass
 
 
@@ -41,5 +41,5 @@ class Scheduler:
     def __init__(self, owner: Owner):
         self.owner = owner
 
-    def get_todays_schedule(self) -> list[Task]:
+    def get_todays_schedule(self) -> list[tuple[Pet, Task]]:
         pass
