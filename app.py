@@ -57,8 +57,16 @@ else:
 st.divider()
 
 st.subheader("Today's Schedule")
-schedule = Scheduler(owner).get_todays_schedule()
+scheduler = Scheduler(owner)
+
+conflicts = scheduler.find_conflicts()
+for warning in conflicts:
+    st.warning(warning)
+
+schedule = scheduler.get_todays_schedule()
 if schedule:
+    if not conflicts:
+        st.success("No scheduling conflicts.")
     st.table(
         [
             {
@@ -71,5 +79,40 @@ if schedule:
             for pet, task in schedule
         ]
     )
+
+    st.subheader("Complete a Task")
+    pending = [(pet, task) for pet, task in schedule if not task.completed]
+    if pending:
+        labels = [f"{task.time} - {pet.name}: {task.description}" for pet, task in pending]
+        choice = st.selectbox("Task", labels)
+        if st.button("Mark complete"):
+            pet, task = pending[labels.index(choice)]
+            next_task = scheduler.complete_task(pet, task)
+            if next_task:
+                st.success(f"Done! Next {task.frequency} task scheduled for {next_task.due_date}.")
+            else:
+                st.success("Done!")
+            st.rerun()
+    else:
+        st.info("All of today's tasks are complete.")
 else:
-    st.info("No tasks scheduled yet.")
+    st.info("No tasks scheduled for today.")
+
+st.subheader("Filter Tasks")
+filter_pet = st.selectbox("Pet", ["All"] + [p.name for p in owner.pets])
+filter_status = st.selectbox("Status", ["All", "Not done", "Done"])
+filtered = scheduler.sort_by_time(
+    scheduler.filter_tasks(
+        completed={"All": None, "Not done": False, "Done": True}[filter_status],
+        pet_name=None if filter_pet == "All" else filter_pet,
+    )
+)
+if filtered:
+    st.table(
+        [
+            {"Date": str(t.due_date), "Time": t.time, "Pet": pet.name, "Task": t.description, "Done": t.completed}
+            for pet, t in filtered
+        ]
+    )
+else:
+    st.info("No tasks match this filter.")

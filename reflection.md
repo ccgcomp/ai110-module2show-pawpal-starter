@@ -31,6 +31,10 @@ the owner has 2 or more pets. I considered adding a `pet_name` to Task, but that
 Pet that I'd have to keep in sync. Instead both methods now return `(pet, task)` pairs, so Task stays unchanged
 and the Scheduler, which works across pets, is the one that knows where each task came from.
 
+A second change came in the algorithms phase. Recurring tasks need a date to add one day or one week to, but Task
+only had a time, so I added a `due_date` field (defaulting to today). Completing a daily or weekly task now creates
+a new Task with `due_date` moved forward using `timedelta`, and `get_todays_schedule()` only shows tasks due today.
+
 ---
 
 ## 2. Scheduling Logic and Tradeoffs

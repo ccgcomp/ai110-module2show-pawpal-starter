@@ -44,17 +44,45 @@ pip install -r requirements.txt
 
 ## 🖥️ Sample Output
 
-Run the demo with `python main.py`. It builds one owner with two pets and prints the schedule sorted by time across both pets:
+Run the demo with `python main.py`. It builds one owner with two pets and shows sorting, conflict warnings, recurring tasks and filtering (dates reflect the day it was run):
 
 ```
-Today's Schedule for Cody
+
+Today's Schedule for Cody (sorted by time)
 ----------------------------------------
-[ ] 07:30  Buddy (dog): Morning walk [daily]
-[ ] 08:00  Whiskers (cat): Breakfast [daily]
-[ ] 12:00  Buddy (dog): Flea medication [weekly]
-[ ] 15:00  Whiskers (cat): Vet appointment [once]
-[ ] 18:00  Buddy (dog): Evening feeding [daily]
-[ ] 19:30  Whiskers (cat): Clean litter box [daily]
+[ ] 2026-10-30 07:30  Buddy (dog): Morning walk [daily]
+[ ] 2026-10-30 07:30  Whiskers (cat): Play time [once]
+[ ] 2026-10-30 08:00  Whiskers (cat): Breakfast [daily]
+[ ] 2026-10-30 12:00  Buddy (dog): Flea medication [weekly]
+[ ] 2026-10-30 15:00  Whiskers (cat): Vet appointment [once]
+[ ] 2026-10-30 18:00  Buddy (dog): Evening feeding [daily]
+[ ] 2026-10-30 18:00  Buddy (dog): Brush teeth [daily]
+[ ] 2026-10-30 19:30  Whiskers (cat): Clean litter box [daily]
+
+Conflict warnings
+----------------------------------------
+WARNING: Conflict on 2026-10-30 at 07:30: Buddy - Morning walk, Whiskers - Play time
+WARNING: Conflict on 2026-10-30 at 18:00: Buddy - Evening feeding, Buddy - Brush teeth
+
+Completed 'Morning walk'. Next one created for 2026-10-31.
+
+Filter: Whiskers' tasks
+----------------------------------------
+[ ] 2026-10-30 07:30  Whiskers (cat): Play time [once]
+[ ] 2026-10-30 08:00  Whiskers (cat): Breakfast [daily]
+[ ] 2026-10-30 15:00  Whiskers (cat): Vet appointment [once]
+[ ] 2026-10-30 19:30  Whiskers (cat): Clean litter box [daily]
+
+Filter: completed tasks
+----------------------------------------
+[x] 2026-10-30 07:30  Buddy (dog): Morning walk [daily]
+
+Filter: Buddy's unfinished tasks
+----------------------------------------
+[ ] 2026-10-30 12:00  Buddy (dog): Flea medication [weekly]
+[ ] 2026-10-30 18:00  Buddy (dog): Evening feeding [daily]
+[ ] 2026-10-30 18:00  Buddy (dog): Brush teeth [daily]
+[ ] 2026-10-31 07:30  Buddy (dog): Morning walk [daily]
 ```
 
 ## 🧪 Testing PawPal+
@@ -75,14 +103,14 @@ Sample test output:
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
+All of these live on the `Scheduler` class in `pawpal_system.py` and work across every pet the owner has.
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | `Scheduler.sort_by_time()`, `get_todays_schedule()` | `sorted()` with a lambda key on `(due_date, "HH:MM")`; the schedule only includes tasks due today |
+| Filtering | `Scheduler.filter_tasks(completed, pet_name)` | Filter by completion status, pet name (case-insensitive), or both |
+| Conflict handling | `Scheduler.find_conflicts()` | Returns warning messages for unfinished tasks sharing a date and exact time, same pet or different pets. It never raises |
+| Recurring tasks | `Scheduler.complete_task()` | Completing a `daily` task adds a copy due tomorrow, `weekly` adds one `timedelta(days=7)` later, `once` adds nothing |
 
 ## 📸 Demo Walkthrough
 

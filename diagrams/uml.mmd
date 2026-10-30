@@ -4,6 +4,7 @@ classDiagram
         +str time
         +str frequency
         +bool completed
+        +date due_date
         +mark_complete() None
     }
 
@@ -24,7 +25,11 @@ classDiagram
 
     class Scheduler {
         +Owner owner
+        +sort_by_time(pairs) list~tuple~Pet, Task~~
+        +filter_tasks(completed, pet_name) list~tuple~Pet, Task~~
         +get_todays_schedule() list~tuple~Pet, Task~~
+        +complete_task(pet, task) Task
+        +find_conflicts() list~str~
     }
 
     Owner "1" --> "*" Pet : has
