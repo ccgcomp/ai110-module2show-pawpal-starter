@@ -44,6 +44,14 @@ a new Task with `due_date` moved forward using `timedelta`, and `get_todays_sche
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
 
+My scheduler looks at four things about each task: its due date, its time of day, its frequency, and whether it is
+done. Due date and time matter most because they decide what appears in today's schedule and in what order. A task
+that is not due today is left out, and everything else is sorted by `HH:MM` across all pets. Completion status comes
+next: finished tasks stop causing conflict warnings, and the filter can show done or not-done tasks. Frequency only
+matters at the moment a task is completed, when it decides whether a next task is created and how far ahead (1 day
+or 7 days). I left priority and duration out on purpose. The README mentions them, but my three core actions did
+not need them, and adding them would have meant more fields to keep correct and more tests.
+
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
@@ -63,6 +71,15 @@ that might be wrong.
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
+
+I used Claude Code in VS Code for most of the project: brainstorming the class attributes and methods, writing the
+Mermaid diagram, reviewing the class skeleton for missing relationships, writing the method bodies, drafting the
+test suite, and connecting the Streamlit UI. The most helpful prompts gave it a boundary. Asking for "only what my
+three actions need" kept the design to the four required classes, the same lesson as ByteBites. Asking it to review
+my skeleton for missing relationships found the real gap, that a schedule line could not say which pet a task
+belonged to. Asking it to simplify an algorithm and then comparing the result was also useful, because it forced me
+to judge the answer instead of just accepting it. I did not use separate chat sessions for the algorithm and test
+phases, so I can't say how much they would have helped. Everything was done in one long session.
 
 **b. Judgment and verification**
 
@@ -84,10 +101,27 @@ top to bottom without those extra requirements, so I kept my original and reject
 - What behaviors did you test?
 - Why were these tests important?
 
+I wrote 17 tests. They cover the core classes (marking a task complete, adding a task to a pet, gathering tasks
+across pets), sorting (chronological order across pets, only tasks due today, empty pet and empty owner), filtering
+(by pet name ignoring case, by status, and with no options), recurring tasks (daily creates tomorrow's task, weekly
+creates one 7 days later, a one-time task creates nothing), and conflicts (same time for different pets and for the
+same pet are flagged; different times, completed tasks, and the same time on different days are not). These matter
+because the scheduler is the part of the system that makes decisions. A wrong sort order or a missed conflict would
+not crash anything, so the app would look fine while giving the owner a bad plan. Tests are the only thing that
+would notice.
+
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
+
+I'm fairly confident, about 4 out of 5. Every scheduling behavior has a passing test, including edge cases, and the
+demo script produces the output I expect. None of my tests failed when I first ran them, which I don't take as proof
+that nothing is wrong. The one real bug I found was in the UI, not in the tested logic: a success message shown just
+before `st.rerun()` disappeared instantly, and I caught that by rereading the code, not through a test. The UI itself
+has no automated tests. Next I would test invalid time strings like "25:99" or an empty time, two pets with the same
+name (filtering by name would mix them up), overdue tasks (a daily task not completed yesterday drops out of today's
+schedule instead of showing as overdue), and tasks that overlap by duration, which my exact-time check ignores.
 
 ---
 
@@ -97,10 +131,26 @@ top to bottom without those extra requirements, so I kept my original and reject
 
 - What part of this project are you most satisfied with?
 
+I'm most satisfied with how the Scheduler ended up. It works across all pets, never stores its own copy of the data,
+and every feature (sorting, filtering, recurring tasks, conflicts) is a small method that can be tested on its own.
+Returning `(pet, task)` pairs was a small design change that made the schedule readable for more than one pet without
+adding a back-link from Task to Pet.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+I would add editing and removing tasks and pets, since right now a mistake can't be undone. I would add a duration
+to Task so conflicts can catch overlapping tasks, not only identical times. I would show overdue tasks instead of
+dropping them from today's schedule. I would also save the data to a file, because everything is lost when the
+Streamlit app restarts, and add automated tests for the UI.
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+Deciding the design first and then telling the AI what not to add produced a much smaller and more correct system
+than letting it propose features. Every addition I accepted (returning pairs, `due_date`) came from a specific
+problem I could point to, and the one I rejected (the `groupby` rewrite) did not make anything easier to read. My job
+as the lead architect was less about writing code and more about asking "is this needed?" and checking claims by
+running them.
